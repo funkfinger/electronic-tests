@@ -8,7 +8,6 @@
 #define clr(x) &=~(1<<x) 
 #define inv(x) ^=(1<<x)
 
-
 void setupButton() {
   DDRB clr(BUTTON); // button is input...
   PCMSK set(BUTTON); // turn interrupt on...
@@ -33,7 +32,12 @@ int main() {
   loop();
 }
 
-
+// activates on both rising and falling edge...
 ISR (PCINT0_vect) {
-  PORTB inv(LED);
+  if( PORTB & (1 << (BUTTON)) ) {
+    PORTB set(LED);
+  }
+  else {
+    PORTB clr(LED);
+  }
 }
