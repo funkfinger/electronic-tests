@@ -7,10 +7,13 @@
 #define clr(x) &=~(1<<x) 
 #define inv(x) ^=(1<<x)
 
-uint8_t tick;
+volatile uint16_t tick;
 
-// TODO: calibrate with OSCCAL
-void setupTimers() {  
+void setupTimers() {
+  // calibration...
+  // OSCCAL = 0x00; // lowest...
+  OSCCAL -= 6;
+  // OSCCAL = 0x7f; // highest?...
 
   // CTC mode. set WGM01
   TCCR0A clr(WGM00);  
@@ -37,7 +40,11 @@ void setupAttiny() {
 }
 
 void loopAttiny() {
-  for(;;) {
+  for (;;) {
+    if(tick > 9) {
+      PORTB inv(LED);
+      tick = 0;
+    }
   }
 }
 
@@ -47,6 +54,6 @@ int main() {
 }
 
 ISR (TIMER0_COMPA_vect) {
-  PORTB inv(LED);
+  // PORTB inv(LED);
   tick++;
 }
