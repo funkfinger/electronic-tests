@@ -1,7 +1,7 @@
 // largely based on https://platis.solutions/blog/2015/03/22/diy-interactive-name-tag/
 // ATtiny85 I2C pins:
-// * ATtiny Pin 5 = SDA on LCD i2c
-// * ATtiny Pin 7 = SCK on LCD i2c
+// * ATtiny Pin 5 = SDA on LCD i2c (pulled high with 4.7k)
+// * ATtiny Pin 7 = SCK on LCD i2c (pulled high with 4.7k)
 
 #include <avr/interrupt.h>
 #include <avr/io.h>
