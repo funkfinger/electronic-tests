@@ -1,7 +1,7 @@
 // largely based on https://platis.solutions/blog/2015/03/22/diy-interactive-name-tag/
 // ATtiny85 I2C pins:
-// * ATtiny Pin 5 = SDA on LCD i2c (pulled high with 4.7k)
-// * ATtiny Pin 7 = SCK on LCD i2c (pulled high with 4.7k)
+// * ATtiny Pin 5 (PB0) = SDA on LCD i2c (pulled high with 4.7k)
+// * ATtiny Pin 7 (PB2) = SCK on LCD i2c (pulled high with 4.7k)
 
 #include <avr/interrupt.h>
 #include <avr/io.h>
@@ -26,7 +26,7 @@ volatile uint32_t tick = 0;
 void setupTimers() {
   // calibration...
   // OSCCAL = 0x00; // lowest...
-  OSCCAL -= 4;
+  OSCCAL -= 2;
   // OSCCAL = 0x7f; // highest?...
 
   // CTC mode. set WGM01
