@@ -1,6 +1,8 @@
+#include <avr/pgmspace.h>
+#include <util/delay.h>
+#include <stdlib.h>
 
 #include "SSD1306_minimal.h"
-#include <avr/pgmspace.h>
 
 #define DEG "\xa7" "C"
 
@@ -73,18 +75,18 @@ void splash(){
   // oled.cursorTo(0,7);
   // oled.printString( "http://CoPiino.cc");
   
-  delay(5000);
+  _delay_ms(5000);
   
   oled.clear();
   oled.cursorTo(15,1);
-  oled.printString( "SSD1306+ATTiny");
+  oled.printString( "HELLO!!!");
     
   oled.cursorTo(30,3);
-  oled.printString( "Library");
+  oled.printString( "WHAT WHAT!");
 
 
   oled.cursorTo(0,7);
-  oled.printString( "http://CoPiino.cc");
+  oled.printString( "http://jaywiggins.com");
   
   
   
@@ -92,27 +94,27 @@ void splash(){
 
 
 void heartBeat(){
-  static char big=1;
-  static long startTime=0;
-  long currentTime;
-
-  // get current time
-  currentTime= millis();
-  
-  // update if 1000ms passed  
-  if ((currentTime - startTime) > 200){
-    startTime= currentTime;  
-
-
-    // --- 
-    big=1-big;
-    if (big){
-      oled.drawImage( img_heart_big, 10, 5, 17, 2);      
-    } else {
-      oled.drawImage( img_heart_small, 10, 5, 17, 2);
-    }
-  
-  }  
+  // static char big=1;
+  // static long startTime=0;
+  // long currentTime;
+  //
+  // // get current time
+  // currentTime= millis();
+  //
+  // // update if 1000ms passed
+  // if ((currentTime - startTime) > 200){
+  //   startTime= currentTime;
+  //
+  //
+  //   // ---
+  //   big=1-big;
+  //   if (big){
+  //     oled.drawImage( img_heart_big, 10, 5, 17, 2);
+  //   } else {
+  //     oled.drawImage( img_heart_small, 10, 5, 17, 2);
+  //   }
+  //
+  // }
 }
 
 
@@ -144,24 +146,24 @@ void prepareDisplay(){
 }
 
 char getTemperature(){
-   return random(-30,30); 
+   return rand(); 
 }
 
 char getHumidity(){
-   return random(0,99); 
+   return rand(); 
 }
 
 void setup(){
-  pinMode(3, INPUT);   
+  // pinMode(3, INPUT);
   
   oled.init(0x3c);
   oled.clear();
 
-  delay(1000);
+  _delay_ms(1000);
   
   splash();
   
-  delay(8000);
+  _delay_ms(8000);
 
   prepareDisplay();
   
@@ -174,45 +176,51 @@ void loop(){
   long currentTime;
   
   
-  // get current time
-  currentTime= millis();
-  
-  // update if 1000ms passed  
-  if ((currentTime - startTime) > 1000){
-    startTime= currentTime;  
-    char buf[10];
-    
-    // ---
-    // update temperature
-    char temperature= getTemperature();
-    
-    sprintf(buf, "%+0.2hd" DEG , temperature);
-
-    // set cursor
-    oled.cursorTo(60, 5);
-    
-    // print to display
-    oled.printString( buf );
-
-
-    // ---    
-    // update humidity
-    char humidity= getHumidity();
-    
-    sprintf(buf, "%0.2hd\%", humidity);
-
-    // set cursor
-    oled.cursorTo(67, 6);
-    
-    // print to display
-    oled.printString( buf );
-    
-    
-    
-  }
-  
-  heartBeat();
-  
+  // // get current time
+  // currentTime= millis();
+  //
+  // // update if 1000ms passed
+  // if ((currentTime - startTime) > 1000){
+  //   startTime= currentTime;
+  //   char buf[10];
+  //
+  //   // ---
+  //   // update temperature
+  //   char temperature= getTemperature();
+  //
+  //   // sprintf(buf, "%+0.2hd" DEG , temperature);
+  //   buf = "hello....";
+  //
+  //   // set cursor
+  //   oled.cursorTo(60, 5);
+  //
+  //   // print to display
+  //   oled.printString( buf );
+  //
+  //
+  //   // ---
+  //   // update humidity
+  //   char humidity= getHumidity();
+  //
+  //   sprintf(buf, "%0.2hd\%", humidity);
+  //
+  //   // set cursor
+  //   oled.cursorTo(67, 6);
+  //
+  //   // print to display
+  //   oled.printString( buf );
+  //
+  //
+  //
+  // }
+  //
+  // heartBeat();
+  //
   
 } 
 
+
+int main(void) {
+  setup();
+  loop();
+}

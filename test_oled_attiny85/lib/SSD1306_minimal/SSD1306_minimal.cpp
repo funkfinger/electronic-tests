@@ -23,7 +23,10 @@
 	All text above must be included in any redistribution.
 */
 
+#include <avr/pgmspace.h>
 #include "SSD1306_minimal.h"
+#include <util/delay.h>
+#include <string.h>
 
 // a 5x7 font table
 const unsigned char  BasicFont[] PROGMEM = {
@@ -316,7 +319,7 @@ void SSD1306_Mini::init(uint8_t address)
   
  Wire.begin();
  
- delay(5);	//wait for OLED hardware init
+ _delay_ms(5);	//wait for OLED hardware init
 // constructor(128, 64);
  //SlaveAddress = address;
 

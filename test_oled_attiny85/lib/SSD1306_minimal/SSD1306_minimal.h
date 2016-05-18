@@ -27,7 +27,7 @@
 #ifndef __SSD1306_MINIMAL_H__
 #define __SSD1306_MINIMAL_H__
 
-#include <Arduino.h>
+// #include <Arduino.h>
 
 // config
 #define SlaveAddress 0x3c
