@@ -15,7 +15,7 @@ void setup() {
 void loop() {
   for(;;) {
     PORTB inv(LED);
-    _delay_ms(5);
+    _delay_ms(500);
   }
 }
 
