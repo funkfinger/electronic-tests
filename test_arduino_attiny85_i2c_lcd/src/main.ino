@@ -9,6 +9,8 @@
  * ATtiny Pin 7 = SCK on DS1621  & GPIO
  */
 
+#include <Arduino.h>
+
 #include <TinyWireM.h>                  // I2C Master lib for ATTinys which use USI - comment this out to use with standard arduinos
 #include <LiquidCrystal_attiny.h>          // for LCD w/ GPIO MODIFIED for the ATtiny85
 
