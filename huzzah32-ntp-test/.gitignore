@@ -2,3 +2,5 @@
 .piolibdeps
 settings.h
 .gch
+.clang_complete
+.gcc-flags.json
