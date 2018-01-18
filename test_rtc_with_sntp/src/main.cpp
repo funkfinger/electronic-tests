@@ -1,14 +1,23 @@
 #include <Arduino.h>
 
 // Date and time functions using a DS3231 RTC connected via I2C and Wire lib
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
 #include <NTPClient.h>
 #include <RTClib.h>
+#include <SPI.h>
+// #include <string.h>
 #include <WiFi.h>
 #include <WiFiMulti.h>
 #include <WiFiUdp.h>
 #include <Wire.h>
 
 #include "settings.h"
+
+// OLED reqs...
+#define OLED_RESET 4
+#define OLDE_ADDRESS 0x3c
+Adafruit_SSD1306 display(OLED_RESET);
 
 RTC_DS3231 rtc;
 
@@ -22,7 +31,40 @@ NTPClient timeClient(ntpUDP, "time.google.com", TIME_OFFSET, UPDATE_INTERVAL);
 
 char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
 
+void printToDisp3(const char* str) {
+  display.setTextSize(2);
+  display.setCursor(0,20);
+  display.println(str);
+  display.display();
+}
+
+void printToDisp2(const char* str) {
+  display.setCursor(0,10);
+  display.println(str);
+  display.display();
+}
+
+void printToDisp(const char* str) {
+  display.clearDisplay();
+  display.setTextSize(1);
+  display.setTextColor(WHITE);
+  display.setCursor(0,0);
+  display.println(str);
+  display.display();
+}
+
+void setupOled() {
+  display.begin(SSD1306_SWITCHCAPVCC, 0x3c);
+  display.display(); // adafruit splashscreen - not sure how I feel about them including with lib...
+  delay(2000);
+  printToDisp("Hello function!");
+  delay(1000);
+}
+
+
 void setup () {
+
+  setupOled();
 
   Serial.begin(115200);
 
@@ -31,6 +73,7 @@ void setup () {
   // We start by connecting to a WiFi network
   WiFiMulti.addAP(SETTINGS_NETWORK_SSID, SETTINGS_NETWORK_PASS);
   Serial.println();
+  printToDisp("Wait for WiFi... ");
   Serial.print("Wait for WiFi... ");
 
   while(WiFiMulti.run() != WL_CONNECTED) {
@@ -42,6 +85,9 @@ void setup () {
   Serial.println("WiFi connected");
   Serial.println("IP address: ");
   Serial.println(WiFi.localIP());
+  String ip = WiFi.localIP().toString();
+  printToDisp(ip.c_str());
+
 
   delay(1000);
 
@@ -58,15 +104,16 @@ void setup () {
   if (rtc.lostPower()) {
     Serial.println("RTC lost power, lets set the time!");
     Serial.println("setting epoch / unix time from ntp server...");
-    timeClient.update();
-    delay(1000);
+    for (int i = 0; i < 5; i += 1) { // doing multiple times, seems to need to 'settle'
+      timeClient.update();
+      delay(5000);
 
-    epoch = timeClient.getEpochTime();
-    Serial.print("Epoch Time = ");
-    Serial.println(epoch);
-    Serial.print("formatted time = ");
-    Serial.println(timeClient.getFormattedTime());
-
+      epoch = timeClient.getEpochTime();
+      Serial.print("Epoch Time = ");
+      Serial.println(epoch);
+      Serial.print("formatted time = ");
+      Serial.println(timeClient.getFormattedTime());
+    }
     // following line sets the RTC to the date & time this sketch was compiled
     rtc.adjust(DateTime(epoch));
     // This line sets the RTC with an explicit date & time, for example to set
@@ -78,20 +125,35 @@ void setup () {
 void loop () {
     DateTime now = rtc.now();
 
-    Serial.print(now.year(), DEC);
-    Serial.print('/');
-    Serial.print(now.month(), DEC);
-    Serial.print('/');
-    Serial.print(now.day(), DEC);
-    Serial.print(" (");
-    Serial.print(daysOfTheWeek[now.dayOfTheWeek()]);
-    Serial.print(") ");
-    Serial.print(now.hour(), DEC);
-    Serial.print(':');
-    Serial.print(now.minute(), DEC);
-    Serial.print(':');
-    Serial.print(now.second(), DEC);
-    Serial.println();
+    String t = "";
+    t += now.year();
+    t += "/";
+    t += now.month();
+    t += "/";
+    t += now.day();
+    printToDisp(t.c_str());
 
-    delay(5000);
+    t = "";
+    t += daysOfTheWeek[now.dayOfTheWeek()];
+    printToDisp2(t.c_str());
+
+    String period = " AM";
+    uint8_t periodOffset = 0;
+    if (now.hour() > 12) {
+      period = " PM";
+      periodOffset = 12;
+    }
+
+    t = "";
+    t += now.hour() - periodOffset;
+    t += ":";
+    if (now.minute() < 10) t += "0";
+    t += now.minute();
+    t += ":";
+    if (now.second() < 10) t += "0";
+    t += now.second();
+    t += period;
+    printToDisp3(t.c_str());
+
+    delay(500);
 }
