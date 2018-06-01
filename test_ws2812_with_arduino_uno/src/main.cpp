@@ -1,6 +1,6 @@
 #include <Arduino.h>
 #include <FastLED.h>
-#define NUM_LEDS 8
+#define NUM_LEDS 56
 #define DATA_PIN 6
 
 CRGB leds[NUM_LEDS];
@@ -13,7 +13,7 @@ uint8_t hue = 0;
 
 void loop() {
   hue += 20;
-  fill_solid( &(leds[0]), NUM_LEDS, CHSV( hue, 255, 255));
+  fill_solid( &(leds[0]), NUM_LEDS, CHSV( hue, 255, 128));
   // leds[0] = CRGB::Red;
   FastLED.show();
   delay(500);

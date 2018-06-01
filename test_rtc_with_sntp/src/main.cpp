@@ -21,7 +21,7 @@ Adafruit_SSD1306 display(OLED_RESET);
 
 RTC_DS3231 rtc;
 
-WiFiMulti WiFiMulti;
+ESP8266WiFiMulti WiFiMulti;
 WiFiUDP ntpUDP;
 
 #define TIME_OFFSET -25200
