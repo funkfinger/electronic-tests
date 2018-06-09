@@ -3,7 +3,7 @@
  *
  */
 
- // #include <Arduino.h>
+#include <Arduino.h>
 
 #include <ESP8266WiFi.h>
 #include <NTPClient.h>
@@ -54,41 +54,35 @@ void setup() {
     Serial.println(__DATE__);
     Serial.println(__TIME__);
 
+    // load time from network if rtc has lost power...
     if (rtc.lostPower()) {
-        Serial.println("RTC lost power, lets set the time!");
+        Serial.println("RTC lost power- set time from NTP");
         timeClient.update();
         setTime(timeClient.getEpochTime());
-        Serial.print("hour() ");
-        Serial.println(hour());
         rtc.adjust(DateTime(year(), month(), day(), hour(), minute(), second()));
-
-        // following line sets the RTC to the date & time this sketch was compiled
-        // rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
-        // rtc.adjust(DateTime(timeClient.getYear(), timeClient.getMonth(), timeClient.getDate(), timeClient.getHours(), timeClient.getMinutes(), timeClient.getSeconds()));
-        // This line sets the RTC with an explicit date & time, for example to set
-        // January 21, 2014 at 3am you would call:
-        // rtc.adjust(DateTime(2014, 1, 21, 3, 0, 0));
     }
 
+
+    DateTime now = rtc.now();
+    setTime(now.unixtime());
     delay(500);
 }
 
 
 void loop() {
-  DateTime now = rtc.now();
-  Serial.print(now.year(), DEC);
+  Serial.print(year(), DEC);
   Serial.print('/');
-  Serial.print(now.month(), DEC);
+  Serial.print(month(), DEC);
   Serial.print('/');
-  Serial.print(now.day(), DEC);
+  Serial.print(day(), DEC);
   Serial.print(" (");
-  Serial.print(daysOfTheWeek[now.dayOfTheWeek()]);
+  Serial.print(monthStr(month()));
   Serial.print(") ");
-  Serial.print(now.hour(), DEC);
+  Serial.print(hour(), DEC);
   Serial.print(':');
-  Serial.print(now.minute(), DEC);
+  Serial.print(minute(), DEC);
   Serial.print(':');
-  Serial.print(now.second(), DEC);
+  Serial.print(second(), DEC);
   Serial.println();
 
   delay(5000);
