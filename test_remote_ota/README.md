@@ -18,6 +18,7 @@ Steps to getting over the air updating to happen. Some of these steps were inspi
         "version": 4,
         "firmwareFile": "firmware.bin"
       }
+* JSON parsing code was partially generated from the [ArduinoJson Assistant](https://arduinojson.org/assistant/) which helps with the values to plug into the code.
 
 Because I use `platformio` the `.bin` file is located in the project file at:
 

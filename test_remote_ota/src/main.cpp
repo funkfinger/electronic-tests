@@ -38,9 +38,9 @@ String newFirmwareAvailable() {
       const size_t bufferSize = JSON_OBJECT_SIZE(2) + 50;
       DynamicJsonBuffer jsonBuffer(bufferSize);
       JsonObject& root = jsonBuffer.parseObject(http.getString());
-      http.end();   //Close connection
-      int version = root["version"]; // 1
-      const char* firmwareFile = root["firmwareFile"]; // "firmware-1.bin"
+      http.end();   // close connection...
+      int version = root["version"];
+      const char* firmwareFile = root["firmwareFile"];
       if(FW_VERSION != version) {
         Serial.println("new firmware available...");
         Serial.println(firmwareFile);
