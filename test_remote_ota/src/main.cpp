@@ -7,7 +7,7 @@
 
 #include "settings.h"
 
-#define FW_VERSION 3
+#define FW_VERSION 4
 
 #define NUM_LEDS 8
 #define DATA_PIN 12
@@ -93,7 +93,7 @@ void setup() {
 uint8_t loopCounter = 0;
 
 void loop() {
-  fill_solid( &(leds[0]), NUM_LEDS, CRGB::Cyan);
+  fill_solid( &(leds[0]), NUM_LEDS, CRGB::FireBrick);
   FastLED.show();
   if(loopCounter == 30) {
     Serial.print("new firmware? ");
