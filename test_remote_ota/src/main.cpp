@@ -5,25 +5,27 @@
 #include <ESP8266httpUpdate.h>
 #include <ArduinoJson.h>
 
-
 #include "settings.h"
+
+#define FW_VERSION 3
 
 #define NUM_LEDS 8
 #define DATA_PIN 12
 
-#define FW_VERSION 1
+#define SLEEP_SECONDS 5
 
 CRGB leds[NUM_LEDS];
+String mac;
 
 String versionPath() {
-  String mac;
   mac = WiFi.macAddress();
-  mac.replace(':', '-');
+  mac.replace(":", "-");
   String path = SETTINGS_OTA_VERSION_ADDRESS_PREFIX + mac + SETTINGS_OTA_VERSION_ADDRESS_SUFFIX;
   Serial.print("path: ");
   Serial.println(path);
   return(path);
 }
+
 
 String newFirmwareAvailable() {
   Serial.println("checking for new firmware...");
@@ -50,6 +52,27 @@ String newFirmwareAvailable() {
   return("false");
 }
 
+void checkForNewFirmware(String newAvail) {
+  if(newAvail != "false") {
+    Serial.println("starting update...");
+    String path = SETTINGS_OTA_VERSION_ADDRESS_PREFIX;
+    path = path + mac + "/" + newAvail;
+    Serial.print("new firmware located at: ");
+    Serial.println(path);
+
+    t_httpUpdate_return ret = ESPhttpUpdate.update(path);
+    switch(ret) {
+      case HTTP_UPDATE_FAILED:
+        Serial.printf("HTTP_UPDATE_FAILD Error (%d): %s", ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
+        break;
+
+      case HTTP_UPDATE_NO_UPDATES:
+        Serial.println("HTTP_UPDATE_NO_UPDATES");
+        break;
+      }
+  }
+}
+
 void setup() {
   delay(5000);
 
@@ -62,12 +85,22 @@ void setup() {
   }
 
   FastLED.addLeds<NEOPIXEL, DATA_PIN>(leds, NUM_LEDS);
+  FastLED.setBrightness(100);
+
+  checkForNewFirmware(newFirmwareAvailable());
 }
 
+uint8_t loopCounter = 0;
+
 void loop() {
-  fill_solid( &(leds[0]), NUM_LEDS, CRGB::Yellow);
+  fill_solid( &(leds[0]), NUM_LEDS, CRGB::Cyan);
   FastLED.show();
-  Serial.print("new firmware? ");
-  Serial.println(newFirmwareAvailable());
+  if(loopCounter == 30) {
+    Serial.print("new firmware? ");
+    // checking for new firmware every 60 seconds... make this larger in production...
+    checkForNewFirmware(newFirmwareAvailable());
+    loopCounter = 0;
+  }
+  loopCounter++;
   delay(2000);
 }
