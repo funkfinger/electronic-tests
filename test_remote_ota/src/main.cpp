@@ -7,9 +7,9 @@
 
 #include "settings.h"
 
-#define FW_VERSION 4
+#define FW_VERSION 6
 
-#define NUM_LEDS 8
+#define NUM_LEDS 500
 #define DATA_PIN 12
 
 #define SLEEP_SECONDS 5
@@ -90,17 +90,25 @@ void setup() {
   checkForNewFirmware(newFirmwareAvailable());
 }
 
-uint8_t loopCounter = 0;
+uint16_t loopCounter = 0;
+uint8_t currentLed = 0;
 
 void loop() {
-  fill_solid( &(leds[0]), NUM_LEDS, CRGB::FireBrick);
+  fill_solid( &(leds[0]), NUM_LEDS, CRGB::Black);
+  leds[currentLed] = CRGB::Green;
+  leds[currentLed+10] = CRGB::Red;
+  leds[currentLed+20] = CRGB::White;
+  leds[currentLed+30] = CRGB::Yellow;
+  leds[currentLed+40] = CRGB::Blue;
   FastLED.show();
-  if(loopCounter == 30) {
+  currentLed++;
+  currentLed > NUM_LEDS ? 0 : currentLed;
+  if(loopCounter == 12000) {
     Serial.print("new firmware? ");
     // checking for new firmware every 60 seconds... make this larger in production...
     checkForNewFirmware(newFirmwareAvailable());
     loopCounter = 0;
   }
   loopCounter++;
-  delay(2000);
+  delay(5);
 }
